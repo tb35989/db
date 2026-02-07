@@ -49,7 +49,10 @@ class Table:
     # Output: The items in the record as a tuple
     def get_record(self, rid):
         location = self.page_directory[rid]
-        record = self.page_range[location[0]].base_pages[location[1]].get_record(location[2])
+        if location[3] == "Base":
+            record = self.page_range[location[0]].base_pages[location[1]].get_record(location[2])
+        elif location[3] == "Tail":
+            record = self.page_range[location[0]].tail_pages[location[1]].get_record(location[2])
         return record
 
     # Get base RID
