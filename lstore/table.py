@@ -33,8 +33,7 @@ class Table:
         self.index = Index(self)
         self.merge_threshold_pages = 50  # The threshold to trigger a merge
         self.total_columns = num_columns + 4
-        self.base_rid_count = 1 # RID counter
-        self.tail_rid_count = 1
+        self.rid_count = 1 # RID counter
 
     def __merge(self):
         print("merge is happening")
@@ -55,14 +54,8 @@ class Table:
 
     # Get base RID
     def get_rid(self):
-        rid = self.base_rid_count
-        self.base_rid_count += 1
-        return rid
-
-    # Get tail RID
-    def get_tail_rid(self):
-        rid = self.tail_rid_count
-        self.tail_rid_count += 1
+        rid = self.rid_count
+        self.rid_count += 1
         return rid
 
     # Add base record
@@ -73,3 +66,7 @@ class Table:
             self.page_range.append(p)
 
         self.page_range[-1].append_base(rid, None, time, se, col_info)
+    
+    # Add tail record given the index of the page range
+    def add_tail_record(self, rid, indirection, time, se, col_info, pgRange):
+        self.page_range[pgRange].append_tail(rid, indirection, time, se, col_info)

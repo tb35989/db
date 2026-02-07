@@ -15,6 +15,7 @@ class Query:
         pass
 
     
+    
     """
     # internal Method
     # Read a record with specified RID
@@ -48,15 +49,10 @@ class Query:
         # Update the index
         self.table.index.primary_key_index[key_val] = rid
 
-        # Add to the page directory: RID -> (page_range, page #, offset)
-        location = (len(self.table.page_range) - 1, self.table.page_range[-1].current_base_index, self.table.page_range[-1].base_pages[-1].get_offset())
+        # Add to the page directory: RID -> (page_range, page #, offset, BASEorTail)
+        location = (len(self.table.page_range) - 1, self.table.page_range[-1].current_base_index, self.table.page_range[-1].base_pages[-1].get_offset(), "Base")
         self.table.page_directory[rid] = location
         return True
-
-
-
-
-
     
     """
     # Read matching record with specified search key
@@ -84,43 +80,60 @@ class Query:
     def select_version(self, search_key, search_key_index, projected_columns_index, relative_version):
         pass
 
-    '''
+
     """
     # Update a record with specified key and columns
     # Returns True if update is succesful
     # Returns False if no records exist with given key or if the target record cannot be accessed due to 2PL locking
     """
     def update(self, primary_key, *columns):
-        # Get RID using key, via the index
+        # Get base RID using key, via the index
         try:    
             rid = self.table.index.primary_key_index[primary_key]
         except:
             return False
 
+        # Get the location of record
+        location = self.table.find_record(rid)
+
         # Get record using the page directory (metadata, col1, .., col n)
         record = self.table.get_record(rid)
         
         # Allocate a new tail record and assign an RID
-        tail_rid = self.table.get_tail_rid()
+        tail_rid = self.table.get_rid()
         timestamp = int(time.time())
 
         
         # Gets schema encoding 
         # Note binmask is an integer (need to convert to binary to see schema encoding)
-        bitmask = 0
+        tail_bitmask = 0
+        base_bitmask = int.from_bytes(self.table.page_range[location[0]].base_pages[location[1]].indirection.data[location[2]:location[2]+8], byteorder = 'big')
+
         for i in range(len(columns)):
             pos = len(columns) - (i + 1)
             if columns[i] != None:                
-                bitmask |= (1 << pos)
-        
+                tail_bitmask |= (1 << pos)
+                base_bitmask |= (1 << pos)
+
         # Get indirection
         # POSSIBLE ISSUE: BASE AND TAIL RID CONFLICT
         if record[1] == 0: # first tail record created
             indirection = rid
         else:
             indirection = record[1]
-        '''
+
+        pageRange = location[0]
         
+        # Write tail record with updated values - NON-CUMULATIVE
+        self.table.add_tail_record(tail_rid, indirection, timestamp, tail_bitmask, columns, pageRange)
+
+        # Change Schema Encoding & Indirection in base page
+        self.table.page_range[location[0]].base_pages[location[1]].indirection.data[location[2]:location[2]+8] = tail_rid.to_bytes(8, byteorder='big', signed = True)
+        self.table.page_range[location[0]].base_pages[location[1]].schema_encoding.data[location[2]:location[2]+8] = base_bitmask.to_bytes(8, byteorder='big', signed = True)
+        
+        # Add tail record to the page directory
+        self.table.page_directory[tail_rid] = (pageRange, self.table.page_range[pageRange].current_tail_index, self.table.page_range[pageRange].tail_pages[-1].get_offset(), "Tail") 
+        return True
         
         
             
@@ -170,3 +183,11 @@ class Query:
             u = self.update(key, *updated_columns)
             return u
         return False
+
+    # Helper Function
+    # Columns is a tuple with either None or updated values
+    def create_schema(bitmask, *columns):
+        for i in range(len(columns)):
+            pos = len(columns) - (i + 1)
+            if columns[i] != None:                
+                bitmask |= (1 << pos)

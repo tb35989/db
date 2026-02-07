@@ -75,3 +75,30 @@ class TailPage:
         self.time = Page()
         self.schema_encoding = Page()
         self.pages = [Page() for _ in range(num_cols)]
+    
+    # Retrieves a record
+    def get_record(self, offset):
+        record = (self.rid.data[offset:offset+8], self.indirection.data[offset:offset+8], self.time.data[offset:offset+8], self.schema_encoding.data[offset:offset+8])
+        for page in self.pages:
+            record += (page.data[offset:offset+8],)
+        
+        new_record = []
+        for item in record:
+            new_record.append(int.from_bytes(item, byteorder='big'))
+        return new_record
+    
+    def get_offset(self):
+        return self.rid.get_offset()
+
+    # Appending records into the pages
+    # Assuming that col_info is a tuple (e.g (12, "Smith", "A"))
+    def append_record(self, rid, indirection, time, se, *col_info):
+        if len(col_info) == len(self.pages):
+            self.rid.write(rid)
+            self.indirection.write(indirection)
+            self.time.write(time)
+            self.schema_encoding.write(se)
+            for i in range(len(self.pages)):
+                self.pages[i].write(col_info[i])
+        else:
+            return False
