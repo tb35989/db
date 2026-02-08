@@ -102,7 +102,7 @@ for key in records:
             error = True
     if error:
         print('(v0) update error on', records[key], 'and', updated_columns, ':', record, ', correct:', updated_records[key])
-
+'''
 keys = sorted(list(records.keys()))
 # aggregate on every column 
 for c in range(0, grades_table.num_columns):
@@ -131,4 +131,4 @@ for c in range(0, grades_table.num_columns):
             print('sum error on [', keys[r[0]], ',', keys[r[1]], ']: ', updated_result, ', correct: ', updated_column_sum)
         else:
             pass
-
+'''
