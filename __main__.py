@@ -10,8 +10,8 @@ query = Query(grades_table)
 keys = []
 
 
-query.insert(92107415, 9, 1, 14, 1)
-query.update(92107415, *[None, None, 6, 12, 19])
+query.insert(92107415, 18, 13, 6, 8)
+query.update(92107415, *[None, None, 4, 0, 6])
 
 recordObjecta = query.select_version(92107415, 0, [1,1,1,1,1], 0)[0]
 

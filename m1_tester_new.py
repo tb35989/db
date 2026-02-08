@@ -34,9 +34,11 @@ for i in range(0, number_of_records):
     # print('inserted', records[key])
 print("Insert finished")
 
+
 # Check inserted records using select query
 for key in records:
-    print('select on', key, ':', records[key])
+    #print('select on', key, ':', records[key])
+    pass
 
 # Check inserted records using select query
 for key in records:
@@ -74,7 +76,7 @@ for key in records:
             print('column:', column, 'records:', records[key][j])
             error = True
     if error:
-        print('update error on', records[key], 'and', updated_columns, ':', record, ', correct:', records[key])
+        print('(v1) update error on', records[key], 'and', updated_columns, ':', record, ', correct:', records[key])
     else:
         pass
         # print('update on', original, 'and', updated_columns, ':', record)
@@ -86,7 +88,7 @@ for key in records:
         if column != records[key][j]:
             error = True
     if error:
-        print('update error on', records[key], 'and', updated_columns, ':', record, ', correct:', records[key])
+        print('(v2) update error on', records[key], 'and', updated_columns, ':', record, ', correct:', records[key])
     else:
         pass
         # print('update on', original, 'and', updated_columns, ':', record)
@@ -96,10 +98,11 @@ for key in records:
     error = False
     for j, column in enumerate(record.columns):
         if column != updated_records[key][j]:
+            print('column:', column, 'records:', records[key][j])
             error = True
     if error:
-        print('update error on', records[key], 'and', updated_columns, ':', record, ', correct:', updated_records[key])
-
+        print('(v0) update error on', records[key], 'and', updated_columns, ':', record, ', correct:', updated_records[key])
+'''
 keys = sorted(list(records.keys()))
 # aggregate on every column 
 for c in range(0, grades_table.num_columns):
@@ -128,3 +131,4 @@ for c in range(0, grades_table.num_columns):
             print('sum error on [', keys[r[0]], ',', keys[r[1]], ']: ', updated_result, ', correct: ', updated_column_sum)
         else:
             pass
+'''
