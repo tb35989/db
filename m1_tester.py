@@ -40,7 +40,6 @@ for key in records:
     # here we are sure that there is only one record in t hat array
     record = query.select(key, 0, [1, 1, 1, 1, 1])[0]
     error = False
-    print(record.columns) # temp
     for i, column in enumerate(record.columns):
         if column != records[key][i]:
             error = True
