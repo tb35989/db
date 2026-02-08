@@ -298,6 +298,7 @@ class Query:
             # Finds the value of the record
             # If value is -1, it indicates that the record is deleted, so we will skip the value
             # We should check with the TA to see if this will cause any test case issues
+            print(record.columns)
             if record.columns == [-1 for _ in range(self.table.num_columns)]:
                 continue
             else:
