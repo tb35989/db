@@ -13,14 +13,14 @@ class PageRange:
     # Adds user info into columns inside base page (for INSERT)
     def append_base(self, rid, indirection, time, se, col_info):
         if self.base_appends == 512:
-            new_page = self.add_base_page()
+            self.add_base_page()
         self.base_pages[self.current_base_index].append_record(rid, indirection, time, se, *col_info)
         self.base_appends += 1 
 
     # Adds user info into columns inside tail page (for UPDATE)
     def append_tail(self, rid, indirection, time, se, col_info):
         if self.tail_appends == 512:
-            new_page = self.add_tail_page()
+            self.add_tail_page()
         self.tail_pages[self.current_tail_index].append_record(rid, indirection, time, se, *col_info)
         self.tail_appends += 1
 
