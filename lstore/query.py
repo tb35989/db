@@ -57,6 +57,7 @@ class Query:
         # Add to the page directory: RID -> (page_range, page #, offset, BASEorTail)
         location = (len(self.table.page_range) - 1, self.table.page_range[-1].current_base_index, self.table.page_range[-1].base_pages[-1].get_offset(), "Base")
         self.table.page_directory[rid] = location
+
         return True
     
     """
@@ -152,14 +153,15 @@ class Query:
                     else:
                         indirection = base_record[1]
                         base_record = self.table.get_record(indirection)
+                        user_cols = base_record[4:]
 
                         # Check if we traversed all the way back to a base page
                         # Uses the page directory to see if it is a base page
                         if self.table.page_directory[base_record[0]][3] == "Base":
                             for k in range(len(index_cols)):
                                 if index_cols[k] == 0:
-                                    cols[k] = None
-                            record_objects.append(Record(rid=rid_list[i], key=search_key, columns=base_record[4:]))
+                                    user_cols[k] = None
+                            record_objects.append(Record(rid=rid_list[i], key=search_key, columns=user_cols))
                             
                             done = True
                             break
