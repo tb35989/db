@@ -9,6 +9,16 @@ grades_table = db.create_table('Grades', 5, 0)
 query = Query(grades_table)
 keys = []
 
+
+query.insert(92107415, 9, 1, 14, 1)
+query.update(92107415, *[None, None, 6, 12, 19])
+
+recordObjecta = query.select_version(92107415, 0, [1,1,1,1,1], 0)[0]
+
+print(recordObjecta.rid)
+print(recordObjecta.key)
+print(recordObjecta.columns)
+
 '''
 query.insert(906659671, 93, 0, 0, 0)
 query.update(906659671, *[None, 10, None, None, None])
@@ -16,15 +26,30 @@ query.update(906659671, *[None, 11, None, None, None])
 query.update(906659671, *[None, 12, 35, None, None])
 query.update(906659671, *[None, None, None, 67, None])
 
+
 #query.select(906659671, 0, [1,1,1,1,1])[0]
 
 
-#query.select_version(906659671, 0, [1,1,1,1,1], 0)[0]
-recordObject = query.select_version(906659671, 0, [1,1,1,1,1], -1)[0]
-print(query.select_version(906659671, 0, [1,1,1,1,1], -2))
-print(query.select_version(906659671, 0, [1,1,1,1,1], -3))
+recordObjecta = query.select_version(906659671, 0, [1,1,1,1,1], 0)[0]
+recordObjectb = query.select_version(906659671, 0, [1,1,1,1,1], -1)[0]
+recordObjectc = query.select_version(906659671, 0, [1,1,1,1,1], -2)[0]
+recordObjectd = query.select_version(906659671, 0, [1,1,1,1,1], -3)[0]
 
+print(recordObjecta.rid)
+print(recordObjecta.key)
+print(recordObjecta.columns)
 
+print(recordObjectb.rid)
+print(recordObjectb.key)
+print(recordObjectb.columns)
+
+print(recordObjectc.rid)
+print(recordObjectc.key)
+print(recordObjectc.columns)
+
+print(recordObjectd.rid)
+print(recordObjectd.key)
+print(recordObjectd.columns)
 
 query.insert(906659671, 93, 79)
 
@@ -85,7 +110,7 @@ print(int.from_bytes(db.tables[0].page_range[0].base_pages[0].pages[1].data[8:16
 print(len(grades_table.page_range))
 print(len(grades_table.page_directory))
 print(len(grades_table.index.primary_key_index))
-'''
+
 insert_time_0 = process_time()
 for i in range(0, 10000):
     query.insert(906659671 + i, 93, 0, 0, 0)
@@ -116,3 +141,4 @@ for i in range(0, 10000):
     query.select(choice(keys),0 , [1, 1, 1, 1, 1])
 select_time_1 = process_time()
 print("Selecting 10k records took:  \t\t\t", select_time_1 - select_time_0)
+'''

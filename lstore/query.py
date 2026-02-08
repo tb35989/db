@@ -131,35 +131,48 @@ class Query:
         
 
         record_objects = []
+        relVersion = relative_version
+        index_cols = projected_columns_index[:]
+        done = False
 
         for i in range(len(rid_list)):
-            # Return the base record version
             base_record = self.table.get_record(rid_list[i])
-            if relative_version == 0 or base_record[1] == 0:
-                record_objects.append(Record(rid=rid_list[i], key=search_key, columns=base_record[4:]))
-                continue
-                
-            isBase = relative_version == 0
 
-            # Iterate through the pages, (relative_version) times
-            while relative_version < 0:
-                if base_record[1] == 0:
-                     break # no past version beyond this exists
-                else:
-                    indirection = base_record[1]
-                    base_record = self.table.get_record(indirection)
-                relative_version += 1
+            # Iterate through the pages, (relative_version + 1) times
+            # E.g if it is -1, it needs to traverse 2 times, if it is -2, it traverses 3 times
+            if relative_version < 0:
+                while relative_version <= 0:
+                    if base_record[1] == 0:
+                        break # no past version beyond this exists
+                    else:
+                        indirection = base_record[1]
+                        base_record = self.table.get_record(indirection)
+
+                        # Check if we traversed all the way back to a base page
+                        # Uses the page directory to see if it is a base page
+                        if self.table.page_directory[base_record[0]][3] == "Base":
+                            for k in range(len(index_cols)):
+                                if index_cols[k] == 0:
+                                    cols[k] = None
+                            record_objects.append(Record(rid=rid_list[i], key=search_key, columns=base_record[4:]))
+                            
+                            done = True
+                            break
+
+                    relative_version += 1
+
+            if done: # if we traversed back to a base page above
+                continue
 
             cols = base_record[4:] # user columns in base record
-            index_cols = projected_columns_index[:]
 
             # Check Schema Encoding to see which columns were updated in this tail record
-            num_cols = len(cols)
-            schema = format(base_record[3], f'0{num_cols}b')
-            for j in range(len(schema)):
-                if schema[j] == "1":
-                    index_cols[j] = -1
-
+            if relVersion < 0:
+                num_cols = len(cols)
+                schema = format(base_record[3], f'0{num_cols}b')
+                for j in range(len(schema)):
+                    if schema[j] == "1":
+                        index_cols[j] = -1
 
             # Check if there are any tail records at all
             if base_record[1] == 0:
