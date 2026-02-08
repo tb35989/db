@@ -25,7 +25,7 @@ class Query:
     def delete(self, primary_key):
         invalidate = [-1 for _ in range(self.table.num_columns)]
 
-        # Sets the base record's indirection to a tail record that has all user columns set to None
+        # Sets the base record's indirection to a tail record that has all user columns set to -1
         self.update(primary_key, *invalidate)
 
         return True
@@ -271,13 +271,6 @@ class Query:
         pageNum = self.table.page_range[pageRange].current_tail_index
         self.table.page_directory[tail_rid] = (pageRange, pageNum, self.table.page_range[pageRange].tail_pages[pageNum].get_offset(), "Tail") 
         return True
-        
-        
-            
-        
-
-
-
     
     """
     :param start_range: int         # Start of the key range to aggregate 
@@ -288,7 +281,31 @@ class Query:
     # Returns False if no record exists in the given range
     """
     def sum(self, start_range, end_range, aggregate_column_index):
-        pass
+        summation = 0
+
+        arr = [0] *self.table.num_columns
+        arr[aggregate_column_index] = 1
+
+        # Finds all RIDs in a given range using the primary key index, then adds up their values
+        # Since for loops end before the stop, I added one to end_range
+        for i in range(start_range, end_range + 1):
+            key_col = self.table.key # index of primary key column
+
+            # Gets the newest version of the record
+            # Since this is a primary key, we should only get one record object in return, so we can grab the 0th index
+            record = self.select_version(i, key_col, arr, 0)[0]
+            
+            # Finds the value of the record
+            # If value is -1, it indicates that the record is deleted, so we will skip the value
+            # We should check with the TA to see if this will cause any test case issues
+            if record.columns == [-1 for _ in range(self.table.num_columns)]:
+                continue
+            else:
+                record_value = record.columns[aggregate_column_index]
+                
+            summation += record_value
+        
+        return summation
 
     
     """

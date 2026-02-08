@@ -11,7 +11,38 @@ keys = []
 
 
 query.insert(92107415, 18, 13, 6, 8)
-query.update(92107415, *[None, None, 4, 0, 6])
+query.insert(92107416, 2, 13, 6, 8)
+query.delete(92107415)
+summation = query.sum(92107415, 92107416, 4)
+print(summation)
+'''
+a = grades_table.get_record(2)
+print(a)
+
+print(int.from_bytes(db.tables[0].page_range[0].tail_pages[0].rid.data[0:8], byteorder = 'big'))
+print(int.from_bytes(db.tables[0].page_range[0].tail_pages[0].indirection.data[0:8], byteorder = 'big'))
+print(int.from_bytes(db.tables[0].page_range[0].tail_pages[0].time.data[0:8], byteorder = 'big'))
+print(int.from_bytes(db.tables[0].page_range[0].tail_pages[0].schema_encoding.data[0:8], byteorder = 'big'))
+print(int.from_bytes(db.tables[0].page_range[0].tail_pages[0].pages[0].data[0:8], byteorder = 'big'))
+print(int.from_bytes(db.tables[0].page_range[0].tail_pages[0].pages[1].data[0:8], byteorder = 'big'))
+print(int.from_bytes(db.tables[0].page_range[0].tail_pages[0].pages[2].data[0:8], byteorder = 'big'))
+print(int.from_bytes(db.tables[0].page_range[0].tail_pages[0].pages[3].data[0:8], byteorder = 'big'))
+print(int.from_bytes(db.tables[0].page_range[0].tail_pages[0].pages[4].data[0:8], byteorder = 'big'))
+
+print(int.from_bytes(db.tables[0].page_range[0].base_pages[0].rid.data[0:8], byteorder = 'big'))
+print(int.from_bytes(db.tables[0].page_range[0].base_pages[0].indirection.data[0:8], byteorder = 'big'))
+print(int.from_bytes(db.tables[0].page_range[0].base_pages[0].time.data[0:8], byteorder = 'big'))
+print(int.from_bytes(db.tables[0].page_range[0].base_pages[0].schema_encoding.data[0:8], byteorder = 'big'))
+print(int.from_bytes(db.tables[0].page_range[0].base_pages[0].pages[0].data[0:8], byteorder = 'big'))
+print(int.from_bytes(db.tables[0].page_range[0].base_pages[0].pages[1].data[0:8], byteorder = 'big'))
+print(int.from_bytes(db.tables[0].page_range[0].base_pages[0].pages[2].data[0:8], byteorder = 'big'))
+print(int.from_bytes(db.tables[0].page_range[0].base_pages[0].pages[3].data[0:8], byteorder = 'big'))
+print(int.from_bytes(db.tables[0].page_range[0].base_pages[0].pages[4].data[0:8], byteorder = 'big'))
+
+
+query.update(92107415, *[None, None, 4,range[0].tail_pages[0].pages[0].data[0:8], byteorder = 'big'))
+print(int.from_bytes(db.tables[0].page_range[0].tail_pages[0].pages[1].data[0:8], byteorder = 'big'))
+print(int.from_bytes(db.tables[0].page 0, 6])
 
 recordObjecta = query.select_version(92107415, 0, [1,1,1,1,1], 0)[0]
 
@@ -19,7 +50,7 @@ print(recordObjecta.rid)
 print(recordObjecta.key)
 print(recordObjecta.columns)
 
-'''
+
 query.insert(906659671, 93, 0, 0, 0)
 query.update(906659671, *[None, 10, None, None, None])
 query.update(906659671, *[None, 11, None, None, None])
@@ -141,4 +172,11 @@ for i in range(0, 10000):
     query.select(choice(keys),0 , [1, 1, 1, 1, 1])
 select_time_1 = process_time()
 print("Selecting 10k records took:  \t\t\t", select_time_1 - select_time_0)
+
+# Measuring Delete Performance
+delete_time_0 = process_time()
+for i in range(0, 10000):
+    query.delete(906659671 + i)
+delete_time_1 = process_time()
+print("Deleting 10k records took:  \t\t\t", delete_time_1 - delete_time_0)
 '''
