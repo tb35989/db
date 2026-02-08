@@ -48,7 +48,7 @@ class BasePage:
         
         new_record = []
         for item in record:
-            new_record.append(int.from_bytes(item, byteorder='big'))
+            new_record.append(int.from_bytes(item, byteorder='big', signed = True))
         return new_record
     
     def get_offset(self):
