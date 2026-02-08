@@ -167,8 +167,8 @@ class Query:
             cols = base_record[4:] # user columns in base record
 
             # Check Schema Encoding to see which columns were updated in this tail record
+            num_cols = len(cols)
             if relVersion < 0:
-                num_cols = len(cols)
                 schema = format(base_record[3], f'0{num_cols}b')
                 for j in range(len(schema)):
                     if schema[j] == "1":
@@ -186,6 +186,10 @@ class Query:
 
                 while 1 in index_cols and indirection != rid_list[i]: # Check if any columns still need update or if we return to base page
                     record = self.table.get_record(indirection) # use indirection to find latest tail page
+
+                    # Get schema encoding for tail record
+                    tail_schema = format(record[3], f'0{num_cols}b')
+
                     for index, binary in enumerate(index_cols):
                         # Check if column needs to be returned
                         if binary == 0:
@@ -196,7 +200,10 @@ class Query:
                             if record[index + 4] != cols[index] and record[index+4] != 0: # new value is different and not equal to zero
                                 cols[index] = record[index + 4]
                                 index_cols[index] = -1
-            
+                            elif record[index + 4] != cols[index] and tail_schema[index] == "1":
+                                cols[index] = record[index + 4]
+                                index_cols[index] = -1
+
                     # Get new tail record, using indirection
                     indirection = record[1]
 
