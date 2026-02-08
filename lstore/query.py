@@ -23,7 +23,12 @@ class Query:
     # Return False if record doesn't exist or is locked due to 2PL
     """
     def delete(self, primary_key):
-        pass
+        invalidate = [-1 for _ in range(self.table.num_columns)]
+
+        # Sets the base record's indirection to a tail record that has all user columns set to None
+        self.update(primary_key, *invalidate)
+
+        return True
     
     
     """

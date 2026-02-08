@@ -46,7 +46,7 @@ class Table:
         return location
 
     # Note: RID -> (page_range, page #, offset)
-    # Output: The items in the record as a tuple
+    # Output: The items in the record as a tuple (i.e (RID, indirection, time, schema, col1, col2, ..., coln))
     def get_record(self, rid):
         location = self.page_directory[rid]
         if location[3] == "Base":
