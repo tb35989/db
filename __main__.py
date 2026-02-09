@@ -22,6 +22,33 @@ summation = query.sum_version(92107415, 92107417, 1, 0)
 # for some reason it's not adding in 92107415 and it's not working after i do the update
 query.update(92107417, None, None, None, 30)
 print(summation)
+
+print(grades_table.get_record(1))
+# I'm confused on the schema encoding column. This is saying its 31? i thought it was
+# made up of 1s and 0s
+# also, shouldn't this record be deleted so it should have -1s in all its columns?
+print(grades_table.get_record(3))
+# weird, it looks like the third record in the table is the deleted record 
+# but the original record is still there. is that how it's supposed to be?
+
+print("start of table")
+print(grades_table.get_record(1))
+print(grades_table.get_record(2))
+print(grades_table.get_record(3))
+print(grades_table.get_record(4))
+print(grades_table.get_record(5))
+print("end of table")
+
+# I see, the old records are still there. also, sum_version is adding up the records
+# with the old primary keys, but when they were switched to -1's it deleted the primary 
+# keys so those columns aren't added up, the old ones are. is this what's supposed to happen?
+
+# check schema encoding
+query.insert(92107418, 2, 2, 2, 2)
+print(grades_table.get_record(6))
+query.update(92107418, 3, None, None, None)
+print(grades_table.get_record(7))
+# why is it setting the schema encoding column to 31??????
 '''
 a = grades_table.get_record(2)
 print(a)
