@@ -15,6 +15,13 @@ query.insert(92107416, 2, 13, 6, 8)
 query.delete(92107415)
 summation = query.sum(92107415, 92107416, 4)
 print(summation)
+
+# test sum version
+query.insert(92107417, 3, 5, 4, 27)
+summation = query.sum_version(92107415, 92107417, 1, 0)
+# for some reason it's not adding in 92107415 and it's not working after i do the update
+query.update(92107417, None, None, None, 30)
+print(summation)
 '''
 a = grades_table.get_record(2)
 print(a)
