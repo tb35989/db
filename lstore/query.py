@@ -204,12 +204,12 @@ class Query:
                         elif binary == -1: # Column has already been updated
                             continue
                         elif binary == 1:
-                            if record[index + 4] != cols[index] and record[index+4] != 0: # new value is different and not equal to zero
-                                cols[index] = record[index + 4]
-                                index_cols[index] = -1
-                            elif record[index + 4] != cols[index] and tail_schema[index] == "1":
-                                cols[index] = record[index + 4]
-                                index_cols[index] = -1
+                            #if record[index + 4] != cols[index] and record[index+4] != 0: # new value is different and not equal to zero
+                            cols[index] = record[index + 4]
+                            index_cols[index] = -1
+                            #elif record[index + 4] != cols[index] and tail_schema[index] == "1":
+                            #    cols[index] = record[index + 4]
+                            #    index_cols[index] = -1
 
                     # Get new tail record, using indirection
                     indirection = record[1]
