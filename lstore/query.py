@@ -90,7 +90,7 @@ class Query:
                 for j in range(len(index_cols)):
                     if index_cols[j] == 0:
                         cols[j] = None
-                record_objects.append(cols)
+                record_objects.append(Record(rid=rid_list[i], key = search_key, columns=cols))
                 continue
             else:
                 indirection = base_record[1] # use indirection to find latest tail page
